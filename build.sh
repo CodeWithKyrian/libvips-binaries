@@ -17,16 +17,16 @@ if [ $# -lt 1 ]; then
   echo "- win-x64"
   echo "- win-arm64"
   echo "- linux-x64"
-  echo "- linux-arm64v8"
+  echo "- linux-arm64"
   echo "- darwin-x64"
-  echo "- darwin-arm64v8"
+  echo "- darwin-arm64"
   echo
   exit 1
 fi
 PLATFORM="$1"
 
 # macOS
-for flavour in darwin-x64 darwin-arm64v8; do
+for flavour in darwin-x64 darwin-arm64; do
   if [ $PLATFORM = $flavour ] && [ "$(uname)" == "Darwin" ]; then
     echo "Building $flavour..."
 
@@ -37,7 +37,7 @@ for flavour in darwin-x64 darwin-arm64v8; do
 
     export PKG_CONFIG="$(brew --prefix)/bin/pkg-config --static"
 
-    if [ $PLATFORM = "darwin-arm64v8" ]; then
+    if [ $PLATFORM = "darwin-arm64" ]; then
       export MACOSX_DEPLOYMENT_TARGET="11.0"
     else
       export MACOSX_DEPLOYMENT_TARGET="10.15"
@@ -70,7 +70,7 @@ for flavour in win-x64 win-arm64; do
 done
 
 # Linux
-for flavour in linux-x64 linux-arm64v8; do
+for flavour in linux-x64 linux-arm64; do
   if [ $PLATFORM = $flavour ]; then
     echo "Building $flavour..."
     docker build --pull -t "vips-dev-$flavour" "platforms/$flavour"

@@ -21,7 +21,7 @@ RUN \
 
 ENV \
   PKG_CONFIG="aarch64-linux-gnu-pkgconf --static" \
-  PLATFORM="linux-arm64v8" \
+  PLATFORM="linux-arm64" \
   FLAGS="-march=armv8-a" \
   RUSTFLAGS="-Zlocation-detail=none -Zfmt-debug=none" \
   MESON="--cross-file=/root/meson.ini"

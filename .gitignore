@@ -2,3 +2,6 @@ libvips*
 *.log
 deps/
 target/
+
+.idea
+.vscode

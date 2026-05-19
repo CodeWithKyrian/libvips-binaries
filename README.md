@@ -29,10 +29,10 @@ platforms in parallel, or you can select specific platforms. When `create_releas
 is enabled, a GitHub Release is created with `.tar.gz` assets:
 
 ```
-libvips-darwin-arm64v8.tar.gz
+libvips-darwin-arm64.tar.gz
 libvips-darwin-x64.tar.gz
 libvips-linux-x64.tar.gz
-libvips-linux-arm64v8.tar.gz
+libvips-linux-arm64.tar.gz
 libvips-win-x64.tar.gz
 ```
 

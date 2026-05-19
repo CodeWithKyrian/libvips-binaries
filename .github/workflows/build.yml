@@ -7,14 +7,14 @@ on:
         required: true
         type: string
       platforms:
-        description: 'Platforms to build (comma-separated, empty = all): darwin-arm64v8, darwin-x64, linux-x64, linux-arm64v8, win-x64'
+        description: 'Platforms to build (comma-separated, empty = all): darwin-arm64, darwin-x64, linux-x64, linux-arm64, win-x64'
         required: false
         default: ''
         type: string
       create_release:
         description: 'Create a GitHub Release with the built artifacts'
         required: false
-        default: true
+        default: false
         type: boolean
 
 permissions:
@@ -29,13 +29,13 @@ jobs:
       matrix:
         include:
           - os: macos-15
-            platform: darwin-arm64v8
+            platform: darwin-arm64
           - os: macos-13
             platform: darwin-x64
           - os: ubuntu-24.04
             platform: linux-x64
           - os: ubuntu-24.04-arm
-            platform: linux-arm64v8
+            platform: linux-arm64
           - os: ubuntu-24.04
             platform: win-x64
 

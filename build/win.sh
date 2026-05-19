@@ -16,7 +16,7 @@ mkdir /vips
 cd /vips
 
 case ${PLATFORM} in
-  *arm64v8)
+  *arm64)
     ARCH=arm64
     ;;
   *x64)
