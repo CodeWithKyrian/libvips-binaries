@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+## Based on posix.sh from lovell/sharp-libvips (Apache 2.0)
 ## Copyright 2017 Lovell Fuller and others.
 ## SPDX-License-Identifier: Apache-2.0
 
@@ -381,8 +382,6 @@ if [ "$LINUX" = true ]; then
   # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
   EXCLUDE_LIBS=$(find ${TARGET}/lib -maxdepth 1 -name '*.a' ! -name 'libglib-2.0.a' ! -name 'libgobject-2.0.a' -printf "-Wl,--exclude-libs=%f ")
   EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
-  # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
-  # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
   printf "{local:g_param_spec_types;};" > vips.map
 fi
 # Disable building man pages, gettext po files, tools, and (fuzz-)tests
@@ -479,17 +478,17 @@ printf "{\n\
 }" >versions.json
 
 # Add third-party notices
-$CURL -O https://raw.githubusercontent.com/lovell/sharp-libvips/main/THIRD-PARTY-NOTICES.md
+$CURL -O https://raw.githubusercontent.com/CodeWithKyrian/libvips-binaries/main/THIRD-PARTY-NOTICES.md
 
 # Create the tarball
 ls -al lib
 rm -rf lib
 mv lib-filtered lib
-tar chzf ${PACKAGE}/sharp-libvips-${PLATFORM}.tar.gz \
+tar chzf ${PACKAGE}/libvips-${PLATFORM}.tar.gz \
   include \
   lib \
   *.json \
   THIRD-PARTY-NOTICES.md
 
 # Allow tarballs to be read outside container
-chmod 644 ${PACKAGE}/sharp-libvips-${PLATFORM}.tar.*
+chmod 644 ${PACKAGE}/libvips-${PLATFORM}.tar.*
