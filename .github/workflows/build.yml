@@ -1,0 +1,96 @@
+name: Build and Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'libvips version (e.g. 8.15.3)'
+        required: true
+        type: string
+      platforms:
+        description: 'Platforms to build (comma-separated, empty = all): darwin-arm64v8, darwin-x64, linux-x64, linux-arm64v8, win-x64'
+        required: false
+        default: ''
+        type: string
+      create_release:
+        description: 'Create a GitHub Release with the built artifacts'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: build-${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            platform: darwin-arm64v8
+          - os: macos-13
+            platform: darwin-x64
+          - os: ubuntu-24.04
+            platform: linux-x64
+          - os: ubuntu-24.04-arm
+            platform: linux-arm64v8
+          - os: ubuntu-24.04
+            platform: win-x64
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          pipx install meson
+          brew install automake nasm
+
+      - name: Update version
+        run: |
+          sed -i.bak "s/^VERSION_VIPS=.*/VERSION_VIPS=${{ inputs.version }}/" versions.properties
+
+      - name: Build
+        if: inputs.platforms == '' || contains(inputs.platforms, matrix.platform)
+        run: bash build.sh ${{ matrix.platform }}
+
+      - name: Upload artifact
+        if: inputs.platforms == '' || contains(inputs.platforms, matrix.platform)
+        uses: actions/upload-artifact@v6
+        with:
+          name: build-${{ matrix.platform }}
+          path: 'libvips-*.tar.gz'
+          compression-level: 0
+          retention-days: 1
+
+  create-release:
+    if: inputs.create_release
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          merge-multiple: true
+
+      - name: Generate release notes
+        run: |
+          cat > release-notes.md <<EOF
+          # libvips ${{ inputs.version }}
+
+          Pre-built shared libraries for all supported platforms.
+
+          | Asset | Platform |
+          |-------|----------|
+          $(for f in libvips-*.tar.gz; do echo "| \`$f\` | ${f#libvips-} |"; done)
+          EOF
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ inputs.version }}
+          name: "libvips ${{ inputs.version }}"
+          artifacts: 'libvips-*.tar.gz'
+          bodyFile: release-notes.md
+          makeLatest: true

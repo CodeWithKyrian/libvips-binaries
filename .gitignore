@@ -1,0 +1,4 @@
+libvips*
+*.log
+deps/
+target/
