@@ -447,7 +447,7 @@ copydeps ${VIPS_CPP_DEP} ${TARGET}/lib-filtered
 cd ${TARGET}/lib-filtered
 if [ "$DARWIN" = true ]; then
   mv libvips-cpp.*.dylib libvips.42.dylib
-  install_name_tool -id "@rpath/libvips.42.dylib" libvips.42.dylib
+#  install_name_tool -id "@rpath/libvips.42.dylib" libvips.42.dylib
 elif [ "$LINUX" = true ]; then
   mv libvips-cpp.so.* libvips.so.42
 fi
