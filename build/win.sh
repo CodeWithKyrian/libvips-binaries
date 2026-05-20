@@ -30,9 +30,12 @@ echo "Downloading $URL"
 $CURL -O $URL
 unzip $FILENAME
 
+# Clean and zip
 cd /vips/vips-dev-${VERSION_VIPS_SHORT}
 rm bin/libvips-cpp-42.dll
 cp bin/*.dll lib/
+
+$CURL -O https://raw.githubusercontent.com/CodeWithKyrian/libvips-binaries/main/THIRD-PARTY-NOTICES.md
 
 echo "Creating tarball"
 tar czf /packaging/libvips-${PLATFORM}.tar.gz \
@@ -40,7 +43,11 @@ tar czf /packaging/libvips-${PLATFORM}.tar.gz \
   lib/glib-2.0 \
   lib/libvips.lib \
   lib/*.dll \
-  *.json
+  *.json \
+  THIRD-PARTY-NOTICES.md
 
+# Allow tarballs to be read outside container
 chmod 644 /packaging/libvips-${PLATFORM}.tar.*
-rm -rf lib include *.json
+
+# Remove working directories
+rm -rf lib include *.json THIRD-PARTY-NOTICES.md
